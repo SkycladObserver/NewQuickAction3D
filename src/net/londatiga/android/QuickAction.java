@@ -2,6 +2,7 @@ package net.londatiga.android;
 
 import android.content.Context;
 
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
@@ -12,7 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView.BufferType;
 
+import android.text.Layout;
 import android.text.SpannableStringBuilder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -228,11 +231,12 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	 * Show quickaction popup. Popup is automatically positioned, on top or bottom of anchor view.
 	 * 
 	 */
-	public void show (View anchor) {
+	public void show (View anchor, int offset) {
 		preShow();
-		
+		TextView textView =(TextView)anchor;
 		int xPos, yPos, arrowPos;
-		
+		//Layout layout = ((TextView) anchor).getLayout();
+	    
 		mDidAction 			= false;
 		
 		int[] location 		= new int[2];
@@ -272,6 +276,15 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 			arrowPos = anchorRect.centerX()-xPos;
 		}
 		
+		//This part just checks how many pixels does one character take up then multiplies it to the offset
+		Rect bounds = new Rect();
+		Paint textPaint = textView.getPaint();
+		textPaint.getTextBounds(textView.getText().toString(),0,textView.getText().toString().length(),bounds);
+		int totalWidth = bounds.width();
+		textPaint.getTextBounds(textView.getText().toString(),offset,textView.getText().toString().length(),bounds);
+		int width = bounds.width();
+		arrowPos = totalWidth - width;
+		Log.i(Integer.toString(totalWidth)+" "+Integer.toString(width),Integer.toString(arrowPos)+"ARROWPOSBEEH");
 		int dyTop			= anchorRect.top;
 		int dyBottom		= screenHeight - anchorRect.bottom;
 
